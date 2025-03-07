@@ -1,8 +1,8 @@
 import de.bezier.guido.*;
 //Declare and initialize constants NUM_ROWS and NUM_COLS = 20
-int NUM_ROWS = 5; 
-int NUM_COLS = 5; 
-int NUM_MINES = 2; 
+int NUM_ROWS = 20; 
+int NUM_COLS = 20; 
+int NUM_MINES = 35; 
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 
@@ -41,33 +41,40 @@ public void setMines()
 public void draw ()
 {
     background( 0 );
-    System.out.println(isWon());
     if(isWon() == true)
         displayWinningMessage();
 }
 public boolean isWon()
 {
+  int validButtons = 0; 
  for(int r = 0; r < NUM_ROWS; r++){
    for(int c = 0; c < NUM_COLS; c++){
-     if(mines.contains(buttons[r][c])){
-     if(buttons[r][c].isClicked() == true || buttons[r][c].isFlagged() == false){
-       return false; 
-     }
-     }else{
-       if(buttons[r][c].isClicked() == false){
-       return false; 
-       }
+   if(mines.contains(buttons[r][c])){
+    if( buttons[r][c].isFlagged() == true){
+      validButtons+=1; 
+    }
+   }else{
+     if(buttons[r][c].isClicked() == true){
+     validButtons+=1;
      }
    }
- }
-    //your code here
-    return true; 
+     }
+   }
+  
+  if(validButtons == NUM_ROWS*NUM_COLS){
+    return true;
+  }else{
+    return false;
+  }
 }
 public void displayLosingMessage()
 {
   for(int r = 0; r < NUM_ROWS; r++){
    for(int c = 0; c < NUM_COLS; c++){
-     buttons[r][c].setLabel("loser"); 
+     if(mines.contains(buttons[r][c])){
+       buttons[r][c].reveal();
+     }
+     buttons[r][c].setLabel("L"); 
    }
   }
     //your code here
@@ -77,7 +84,7 @@ public void displayWinningMessage()
     //your code here
      for(int r = 0; r < NUM_ROWS; r++){
    for(int c = 0; c < NUM_COLS; c++){
-     buttons[r][c].setLabel("winner"); 
+     buttons[r][c].setLabel("W"); 
    }
   }
 }
@@ -179,6 +186,10 @@ public class MSButton
     public void setLabel(int newLabel)
     {
         myLabel = ""+ newLabel;
+    }
+    public void reveal()
+    {
+      clicked = true; 
     }
     public boolean isFlagged()
     {
